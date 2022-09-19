@@ -16,7 +16,9 @@ const CreateTemplate = () => {
 
   const addField = () => {
     let newField = { fiedlLable: "", options: [{ option: "" }] }
+    let newRequired = false;
     setInputFields([...inputFields, newField])
+    setRequire(newRequired)
   }
 
   const removeField = (index) => {
@@ -24,8 +26,6 @@ const CreateTemplate = () => {
     data.splice(index, 1)
     setInputFields(data)
   }
-
-
 
   const submit = (e) => {
     e.preventDefault();
@@ -61,51 +61,52 @@ const CreateTemplate = () => {
             className="form-control"
             type="text"
             value={templateName}
-            onChange={(e) => setTemplateName(e.target.value)} />
+            required
+            onChange={(e) => setTemplateName(e.target.value)}
+          />
 
           <hr />
 
-          <form>
-            {inputFields.map((input, index) => {
-              return (
-                <div className="card mb-3" key={index} >
+          {inputFields.map((input, index) => {
+            return (
+              <div className="card mb-3" key={index} >
+                <div className="card-body">
+                  <div className="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <span className=" btn btn-danger btn-md" onClick={() => removeField(index)}>x</span>
+                  </div>
                   <div className="card-body">
-                    <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                      <span className=" btn btn-danger btn-md" onClick={() => removeField(index)}>x</span>
-                    </div>
-                    <div className="card-body">
-                      <div className="mb-1">
-                        <div className="d-flex justify-content-between">
-                          <FieldLabel label="Field Lable:" />
-                          <div>
-                            <input className="form-check-input" type="checkbox" checked={require} onChange={() => setRequire(!require)} id="flexCheckDefault" /> {" "}
-                            <label className="form-check-label text-muted fs-6" for="flexCheckDefault">
-                              <small>Required</small>
-                            </label>
-                          </div>
+                    <div className="mb-1">
+                      <div className="d-flex justify-content-between">
+                        <FieldLabel label="Field Lable:" />
+                        <div>
+                          <input className="form-check-input" type="checkbox" checked={require} onChange={() => setRequire(!require)} id="flexCheckDefault" /> {" "}
+                          <label className="form-check-label text-muted fs-6" htmlFor="flexCheckDefault">
+                            <small>Required</small>
+                          </label>
                         </div>
-                        <input
-                          className="form-control"
-                          name='fiedlLable'
-                          placeholder='Lable Name'
-                          value={input.labelName}
-                          onChange={e => handleFormChange(index, e)}
-                        />
                       </div>
-                      <AddOption handleFormChange={handleFormChange} inputFields={inputFields} setInputFields={setInputFields} />
+                      <input
+                        className="form-control"
+                        name='fiedlLable'
+                        placeholder='Lable Name'
+                        value={input.labelName}
+                        onChange={e => handleFormChange(index, e)}
+                        required
+                      />
                     </div>
+                    <AddOption />
                   </div>
                 </div>
-              )
-            })}
-            <div className="fixed-bottom bg-light p-2">
-              <div className="d-grid gap-2 d-md-flex justify-content-center form-footer container">
-                <button className="btn btn-outline-success btn-md" >Privew</button> {" "}
-                <button className="btn btn-outline-secondary btn-md" onClick={submit}>submit</button>
               </div>
+            )
+          })}
+          <div className="fixed-bottom bg-light p-2">
+            <div className="d-grid gap-2 d-md-flex justify-content-center form-footer container">
+              <button className="btn btn-outline-success btn-md" >Privew</button> {" "}
+              <button className="btn btn-outline-secondary btn-md" onClick={submit}>submit</button>
             </div>
+          </div>
 
-          </form>
         </div>
       </div>
     </>
