@@ -25,7 +25,7 @@ const AddOption = () => {
 
     return (
         <div className='mt-3'>
-            <FieldLabel label="Dropdown Options:" />{" "}
+            <FieldLabel label="Dropdown Options:" /> {" "}
             <button onClick={addOption} className="mr-3 btn btn-outline-secondary btn-sm"><strong>+</strong></button>
 
             {optionField.map((option, index) => <>
