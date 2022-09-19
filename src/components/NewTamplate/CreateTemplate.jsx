@@ -5,6 +5,7 @@ import AddOption from "./AddOption";
 
 const CreateTemplate = () => {
   const [templateName, setTemplateName] = useState("")
+  const [require, setRequire] = useState(false)
   const [inputFields, setInputFields] = useState([])
 
   const handleFormChange = (index, e) => {
@@ -28,7 +29,7 @@ const CreateTemplate = () => {
 
   const submit = (e) => {
     e.preventDefault();
-    console.log(inputFields)
+    console.log(inputFields, require)
   }
 
   return (
@@ -77,9 +78,9 @@ const CreateTemplate = () => {
                         <div className="d-flex justify-content-between">
                           <FieldLabel label="Field Lable:" />
                           <div>
-                            <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                            <label className="form-check-label" for="flexCheckDefault">
-                              Required
+                            <input className="form-check-input" type="checkbox" checked={require} onChange={() => setRequire(!require)} id="flexCheckDefault" /> {" "}
+                            <label className="form-check-label text-muted fs-6" for="flexCheckDefault">
+                              <small>Required</small>
                             </label>
                           </div>
                         </div>
