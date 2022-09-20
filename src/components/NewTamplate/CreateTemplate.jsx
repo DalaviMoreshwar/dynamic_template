@@ -1,37 +1,80 @@
-import React, { useState } from "react";
+import React, { useState } from 'react'
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import FieldLabel from "../FieldLabel";
-import AddOption from "./AddOption";
+import Preview from '../Preview';
+import { Button, Checkbox } from 'antd'
+import { _submitData } from '../../actions/submit.action';
 
 
 const CreateTemplate = () => {
+  let navigate = useNavigate();
+  const dispatch = useDispatch();
   const [templateName, setTemplateName] = useState("")
-  const [require, setRequire] = useState(false)
-  const [inputFields, setInputFields] = useState([])
+  const [form, setForm] = useState([]);
 
-  const handleFormChange = (index, e) => {
-    let data = [...inputFields];
-    data[index][e.target.name] = e.target.value;
-    setInputFields(data)
+  const handleAdd = () => {
+
+    const inputState = {
+      fieldName: "",
+      fieldPlaceholder: "",
+      isRequired: false
+    }
+
+    setForm(prev => [...prev, inputState])
   }
 
-  const addField = () => {
-    let newField = { fiedlLable: "", options: [{ option: "" }] }
-    let newRequired = false;
-    setInputFields([...inputFields, newField])
-    setRequire(newRequired)
+  const handleOnChange = (index, e) => {
+    e.preventDefault();
+    setForm(prev => {
+      return prev.map((item, i) => {
+        if (i !== index) {
+          return item
+        }
+
+        return {
+          ...item,
+          [e.target.name]: e.target.value
+        }
+
+      })
+    })
+  }
+
+  const handleCheck = (index, e) => {
+    setForm(prev => {
+      return prev.map((item, i) => {
+        if (i !== index) {
+          return item
+        }
+
+        return {
+          ...item,
+          [e.target.name]: e.target.checked,
+        }
+
+      })
+    })
   }
 
   const removeField = (index) => {
-    let data = [...inputFields];
+    let data = [...form];
     data.splice(index, 1)
-    setInputFields(data)
+    setForm(data)
   }
 
-  const submit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(inputFields, require)
-  }
+    if (templateName !== "") {
+      let obj = {
+        templateName,
+        temps: form
+      }
+      dispatch(_submitData(obj))
+    }
 
+    navigate("/");
+  }
   return (
     <>
       <div className="row g-0 mt-3 ">
@@ -39,78 +82,73 @@ const CreateTemplate = () => {
           <div className="card">
             <div className="card-body d-grid">
               <h5 className="text-center">Tool Box</h5>
-              <button
-                type="text"
+              <Button
+                type="primary"
                 block
-                className="btn btn-outline-primary btn-md"
-                onClick={addField}
+                onClick={handleAdd}
               >
-                Dropdown
-              </button>
+                Text Field
+              </Button>
             </div>
           </div>
         </div>
         <div className="col-sm-6 col-md-7 p-3">
           <h3 className="text-center">Create Template</h3>
-
           <hr />
-
-          <FieldLabel label="Template Name:" />
-          <input
-            id="templateName"
-            className="form-control"
-            type="text"
-            value={templateName}
-            required
-            onChange={(e) => setTemplateName(e.target.value)}
-          />
-
-          <hr />
-
-          {inputFields.map((input, index) => {
-            return (
-              <div className="card mb-3" key={index} >
-                <div className="card-body">
+          <form>
+            <div style={{ height: "70vh", overflow: "scroll" }}>
+              <FieldLabel label="Template Name:" />
+              <input
+                id="templateName"
+                className="form-control"
+                type="text"
+                value={templateName}
+                onChange={(e) => setTemplateName(e.target.value)}
+                required
+              />
+              <hr />
+              {form.map((item, index) =>
+                <div className='card p-2 mt-4 mb-4' key={`item-${index}`}>
                   <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <span className=" btn btn-danger btn-md" onClick={() => removeField(index)}>x</span>
+                    <Button type="primary" danger size="small" shape="circle" onClick={() => removeField(index)}>X</Button>
                   </div>
-                  <div className="card-body">
-                    <div className="mb-1">
-                      <div className="d-flex justify-content-between">
-                        <FieldLabel label="Field Lable:" />
-                        <div>
-                          <input className="form-check-input" type="checkbox" checked={require} onChange={() => setRequire(!require)} id="flexCheckDefault" /> {" "}
-                          <label className="form-check-label text-muted fs-6" htmlFor="flexCheckDefault">
-                            <small>Required</small>
-                          </label>
-                        </div>
-                      </div>
-                      <input
-                        className="form-control"
-                        name='fiedlLable'
-                        placeholder='Lable Name'
-                        value={input.labelName}
-                        onChange={e => handleFormChange(index, e)}
-                        required
-                      />
-                    </div>
-                    <AddOption />
-                  </div>
-                </div>
-              </div>
-            )
-          })}
-          <div className="fixed-bottom bg-light p-2">
-            <div className="d-grid gap-2 d-md-flex justify-content-center form-footer container">
-              <button className="btn btn-outline-success btn-md" >Privew</button> {" "}
-              <button className="btn btn-outline-secondary btn-md" onClick={submit}>submit</button>
-            </div>
-          </div>
+                  <div className="d-flex justify-content-between">
 
+                    <FieldLabel label="Field Name:" />
+                    <div>
+                      <Checkbox name="isRequired" onChange={(e) => handleCheck(index, e)}>Required</Checkbox>
+                      {" "}
+
+                    </div>
+                  </div>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="fieldName"
+                    value={item.fieldName}
+                    onChange={(e) => handleOnChange(index, e)} required />
+
+                  <FieldLabel label="Placeholder:" />
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="fieldPlaceholder"
+                    value={item.fieldPlaceholder}
+                    onChange={(e) => handleOnChange(index, e)} required />
+                </div>
+              )}
+            </div>
+            <div className="fixed-bottom bg-light p-2 mt-5">
+              <div className="d-grid gap-2 d-md-flex justify-content-center form-footer container">
+                <Preview form={form} /> {" "}
+                <Button type="secondary" disabled={templateName === ""} onClick={e => handleSubmit(e)}>submit</Button>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </>
   );
-};
+}
 
-export default CreateTemplate;
+export default CreateTemplate

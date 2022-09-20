@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import FieldLabel from '../FieldLabel'
 
-const AddOption = () => {
+const AddOption = ({ addOptionData }) => {
   const [optionField, setOptionField] = useState([])
 
   const addOption = () => {
     let newOption = { option: "" }
     setOptionField([...optionField, newOption])
+    addOptionData([...optionField, newOption])
   }
 
   const handleInputChange = (index, e) => {
