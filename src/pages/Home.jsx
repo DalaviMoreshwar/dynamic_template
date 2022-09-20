@@ -24,14 +24,12 @@ const Home = () => {
         <div className="card">
           <div class="card-body">
             <h4 class="card-title">{temp.templateName}</h4>
-            <ol>
+            <ol className="mt-5 d-flex justify-content-between">
               {temp.temps.map((item, i) => {
-                return <div className="mt-5 d-flex justify-content-between" key={`list-${i}`}>
-                  <li>
-                    {item.fieldName}</li>
-                  <Preview form={temp.temps} />
-                </div>
+                return <li key={`list-${i}`}>
+                  {item.fieldName}</li>
               })}
+              <Preview form={temp.temps} />
             </ol>
           </div>
         </div>
